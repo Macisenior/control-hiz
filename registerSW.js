@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/control-hiz/sw.js', { scope: '/control-hiz/' })})}

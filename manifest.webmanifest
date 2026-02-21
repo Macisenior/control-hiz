@@ -1,0 +1,1 @@
+{"name":"Control HIZ","short_name":"HIZ","description":"Control de horas HIZ","start_url":"/control-hiz/","display":"standalone","background_color":"#2c3e50","theme_color":"#2c3e50","lang":"en","scope":"/control-hiz/","icons":[{"src":"/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"/icon-512.png","sizes":"512x512","type":"image/png"}]}
