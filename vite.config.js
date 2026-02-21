@@ -15,7 +15,8 @@ export default defineConfig({
         theme_color: '#2c3e50',
         background_color: '#2c3e50',
         display: 'standalone',
-        start_url: '/',
+        start_url: '/control-hiz/',
+        scope: '/control-hiz/',
         icons: [
           {
             src: '/icon-192.png',
