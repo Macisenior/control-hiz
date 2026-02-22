@@ -13,9 +13,19 @@ body {
   padding: 30px 40px;
   border-radius: 14px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-  width: 420px;
-}
 
+  max-width: 420px;   /* límite en escritorio */
+  width: 95%;         /* adaptable en móvil */
+  margin: 20px auto;  /* centrado */
+  box-sizing: border-box;
+}
+@media (max-width: 480px) {
+
+  .container {
+    padding: 20px;
+  }
+
+}
 h1 {
   text-align: center;
   margin-bottom: 20px;
@@ -312,4 +322,10 @@ body {
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
+}
+.nav-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
 }
