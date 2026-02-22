@@ -4,7 +4,18 @@
   font-size: 16px;
 }
 }
+html {
+  width: 100%;
+  overflow-x: hidden;
+}
 
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+#root {
+  width: 100%;
+}
 html, body {
   width: 100%;
   max-width: 100%;
@@ -15,6 +26,9 @@ body {
   font-family: "Segoe UI", Tahoma, sans-serif;
   background: linear-gradient(135deg, #e8ecf3, #d3dae6);
   
+}
+body {
+  background: red;
 }
 .container {
   background: white;
