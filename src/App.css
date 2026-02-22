@@ -11,10 +11,7 @@ body {
   margin: 0;
   font-family: "Segoe UI", Tahoma, sans-serif;
   background: linear-gradient(135deg, #e8ecf3, #d3dae6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  
 }
 
 .container {
