@@ -368,5 +368,13 @@ button:hover {
   .summary-card p {
     font-size: 18px;
   }
+ .summary-panel {
+    flex-direction: column; /* 🔥 clave */
+  }
+
+  .worker-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
 }
