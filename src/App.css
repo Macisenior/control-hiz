@@ -1,18 +1,19 @@
 * {
   box-sizing: border-box;
- html {
-  font-size: 16px;
 }
-}
+
 html {
+  font-size: 16px;
   width: 100%;
-  overflow-x: hidden;
 }
 
 body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: linear-gradient(135deg, #e8ecf3, #d3dae6);
   width: 100%;
-  overflow-x: hidden;
 }
+
 #root {
   width: 100%;
 }
@@ -27,9 +28,7 @@ body {
   background: linear-gradient(135deg, #e8ecf3, #d3dae6);
   
 }
-body {
-  background: red;
-}
+
 .container {
   background: white;
   padding: 20px;
@@ -347,7 +346,7 @@ button:hover {
 
 .nav-buttons button {
   flex: 1;
-  min-width: 120px;
+  min-width: 0; /* 🔥 clave */
 }
 /* ===== RESPONSIVE MOVIL ===== */
 
