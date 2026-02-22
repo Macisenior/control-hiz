@@ -1,5 +1,6 @@
 * {
   box-sizing: border-box;
+  outline: 1px solid red;
 }
 
 html, body {
@@ -13,18 +14,18 @@ body {
   background: linear-gradient(135deg, #e8ecf3, #d3dae6);
   
 }
-
 .container {
   background: white;
-  padding: 30px 40px;
+  padding: 20px;
   border-radius: 14px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
 
-  max-width: 420px;   /* límite en escritorio */
-  width: 95%;         /* adaptable en móvil */
-  margin: 20px auto;  /* centrado */
-  box-sizing: border-box;
+  width: 100%;          /* 🔥 obligatorio */
+  max-width: 420px;     /* límite en escritorio */
+  margin: 0 auto;       /* centra */
 }
+ 
+  
 @media (max-width: 480px) {
 
   .container {
