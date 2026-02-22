@@ -1,12 +1,15 @@
 * {
   box-sizing: border-box;
-  outline: 1px solid red;
+ html {
+  font-size: 16px;
+}
 }
 
 html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden; /* 🔥 evita scroll lateral */
+   overflow-x: hidden;
 }
 body {
   margin: 0;
@@ -378,4 +381,7 @@ button:hover {
     align-items: flex-start;
   }
 
+}
+input, select {
+  max-width: 100%;
 }
