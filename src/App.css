@@ -1,3 +1,14 @@
+html {
+  background: blue !important;
+}
+
+body {
+  background: yellow !important;
+}
+
+.container {
+  background: white !important;
+}
 body {
   background: lime !important;
 }
