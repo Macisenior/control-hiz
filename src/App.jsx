@@ -295,7 +295,7 @@ doc.text(
     <div className="topbar">
   <div className="brand">
     <span className="brand-text">Control</span>
-    <img src="../public/hiz.png" alt="HIZ" className="brand-logo" />
+    <img src={`${import.meta.env.BASE_URL}hiz.png`} alt="HIZ" className="brand-logo" />
   </div>
 
   <button className="logout-btn" onClick={() => signOut(auth)}>
