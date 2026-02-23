@@ -1,8 +1,15 @@
 * {
   box-sizing: border-box;
 }
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+}
 
-html {
+#root {
+  width: 100%;
   overflow-x: hidden;
 }
 
@@ -12,21 +19,17 @@ body {
   font-family: "Segoe UI", Tahoma, sans-serif;
   background: linear-gradient(135deg, #e8ecf3, #d3dae6);
 }
-
 .container {
-  width: calc(100% - 20px);
-  max-width: 420px;
-  margin: 10px auto;
+  width: 100%;
   padding: 20px;
 }
  
   
-@media (max-width: 480px) {
-
+@media (min-width: 768px) {
   .container {
-    padding: 20px;
+    max-width: 420px;
+    margin: 40px auto;
   }
-
 }
 h1 {
   text-align: center;
