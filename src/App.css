@@ -1,28 +1,23 @@
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
-  width: 100%;
+html {
   overflow-x: hidden;
 }
 
 body {
+  margin: 0;
+  overflow-x: hidden;
   font-family: "Segoe UI", Tahoma, sans-serif;
   background: linear-gradient(135deg, #e8ecf3, #d3dae6);
 }
 
 .container {
-  background: white;
+  width: calc(100% - 20px);
+  max-width: 420px;
+  margin: 10px auto;
   padding: 20px;
-  border-radius: 14px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-
-  width: 100%;          /* 🔥 obligatorio */
-  max-width: 420px;     /* límite en escritorio */
-  margin: 0 auto;       /* centra */
 }
  
   
