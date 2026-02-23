@@ -1,32 +1,17 @@
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-html {
-  font-size: 16px;
-  width: 100%;
-}
-
-body {
-  margin: 0;
-  font-family: "Segoe UI", Tahoma, sans-serif;
-  background: linear-gradient(135deg, #e8ecf3, #d3dae6);
-  width: 100%;
-}
-
-#root {
-  width: 100%;
-}
 html, body {
   width: 100%;
-  max-width: 100%;
   overflow-x: hidden;
 }
+
 body {
-  margin: 0;
   font-family: "Segoe UI", Tahoma, sans-serif;
   background: linear-gradient(135deg, #e8ecf3, #d3dae6);
-  
 }
 
 .container {
@@ -217,7 +202,6 @@ button:hover {
 .registros-container {
   max-height: 220px;
   overflow-y: auto;
-  padding-right: 6px;
   margin-top: 10px;
 }
 
@@ -394,6 +378,7 @@ button:hover {
   }
 
 }
-input, select {
-  max-width: 100%;
+* {
+  outline: 1px solid blue;
 }
+
