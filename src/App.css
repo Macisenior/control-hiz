@@ -196,7 +196,32 @@ button:hover {
   margin: 0;
   color: #2c7be5;
 }
+.summary-card:nth-child(1) {
+  background: linear-gradient(145deg, #eef6ff, #ffffff);
+  border: 1px solid #cfe3f8;
+}
 
+.summary-card:nth-child(1) p {
+  color: #2c7be5;
+}
+
+.summary-card:nth-child(2) {
+  background: linear-gradient(145deg, #f0fff4, #ffffff);
+  border: 1px solid #cdebd9;
+}
+
+.summary-card:nth-child(2) p {
+  color: #27ae60;
+}
+
+.summary-card:nth-child(3) {
+  background: linear-gradient(145deg, #f9fafb, #ffffff);
+  border: 1px solid #e2e8f0;
+}
+
+.summary-card:nth-child(3) p {
+  color: #6c757d;
+}
 .worker-summary {
   margin-top: 25px;
   background: #f1f5f9;
