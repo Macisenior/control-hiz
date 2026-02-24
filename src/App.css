@@ -170,12 +170,12 @@ button:hover {
 
 .summary-card {
   flex: 1;
-  background: white;
+  background: #f8fafc;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+   border: 1px solid #e2e8f0;
+   box-shadow: 0 12px 30px rgba(0,0,0,0.06);
   text-align: center;
-  transition: 0.2s;
+ transition: all 0.3s ease;
 }
 
 .summary-card:hover {
@@ -195,10 +195,12 @@ button:hover {
 
 .worker-summary {
   margin-top: 25px;
-  background: white;
+  background: #f1f5f9;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+   border: 1px solid #dbe3ec;
+  transition: all 0.3s ease; 
 }
 
 .worker-row {
