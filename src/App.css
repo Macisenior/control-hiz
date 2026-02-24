@@ -13,7 +13,7 @@ html, body {
 
 body {
   font-family: "Segoe UI", Tahoma, sans-serif;
-  background: linear-gradient(135deg, #e8ecf3, #d3dae6);
+  background: linear-gradient(135deg, #eef2f7, #e3e8ef);
 }
 
 #root {
@@ -170,12 +170,13 @@ button:hover {
 
 .summary-card {
   flex: 1;
-  background: #f8fafc;
+  background: #ffffff;
   padding: 20px;
-   border: 1px solid #e2e8f0;
-   box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  border: 1px solid #dbe3ec;
+   box-shadow: 0 15px 35px rgba(0,0,0,0.08);
   text-align: center;
  transition: all 0.3s ease;
+  border-top: 4px solid #3498db;
 }
 
 .summary-card:hover {
@@ -199,7 +200,7 @@ button:hover {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-   border: 1px solid #dbe3ec;
+   border: 1px solid #cfd8e3;
   transition: all 0.3s ease; 
 }
 
