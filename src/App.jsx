@@ -318,11 +318,11 @@ doc.text(
         <>
           <div style={{ marginBottom: "10px" }}>
           <select
-    value={trabajador}
-    onChange={(e) => setTrabajador(e.target.value)}
+          value={trabajador}
+          onChange={(e) => setTrabajador(e.target.value)}
   >
-    <option value="">Selecciona trabajador</option>
-    {trabajadores.map((t, index) => (
+         <option value="">Selecciona trabajador</option>
+          {trabajadores.map((t, index) => (
       <option key={index} value={t}>
         {t}
       </option>
@@ -415,18 +415,7 @@ doc.text(
       </div>
     ))}
   </div>
-        <button
-    className="excel-btn"
-    onClick={exportarExcel}
-  >
-    Exportar Excel
-  </button>
-  <button
-    onClick={exportarPDF}
-    className="pdf-btn"
-  >
-    Exportar PDF
-  </button>
+     
           <h2>Registros</h2>
       <div className="registros-container">    
         {registros.map((r, index) => (
@@ -471,6 +460,8 @@ doc.text(
     </div>
   ))}
 </div>
+</>
+)}
   {vista === "trabajadores" && (
     <>
       <h2>Trabajadores</h2>
@@ -577,10 +568,10 @@ doc.text(
         </button>
       </div>
     </div>
-  )}
-
+ )}
 </div>
-  );
+);
 }
+
 
 export default App;
