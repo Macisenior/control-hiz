@@ -301,3 +301,20 @@ button:hover {
   height: 28px;
   object-fit: contain;
 }
+.registro-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.registro-texto {
+  flex: 1;
+}
+
+.registro-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}

@@ -465,13 +465,12 @@ doc.text(
       }}
       className="delete-btn"
     >
-      Eliminar
-    </button>
-  </div>
+     Eliminar
+        </button>
+      </div>
+    </div>
+  ))}
 </div>
-
-       
-        )
   {vista === "trabajadores" && (
     <>
       <h2>Trabajadores</h2>
