@@ -430,53 +430,45 @@ doc.text(
           <h2>Registros</h2>
       <div className="registros-container">    
         {registros.map((r, index) => (
-    <div
-      key={index}
-      style={{
-        marginBottom: "8px",
-        fontSize: "14px",
-       display: "flex",
-justifyContent: "space-between",
-alignItems: "flex-start"
-      }}
-    >
-      <span>
-        {r.trabajador} - {r.fecha} - {r.lugar} - {r.horas}h
-      </span>
-<button
-  onClick={() => {
-    setEditando(r);
-    setEditFecha(r.fecha);
-    setEditLugar(r.lugar);
-    setEditHoras(r.horas);
-  }}
-  className="secondary-btn"
->
-  Editar
-</button>
-   <button
- onClick={async () => {
-  const confirmar = window.confirm(
-    `¿Seguro que quieres eliminar el registro de ${r.trabajador} del ${r.fecha}?`
-  );
-
-  if (!confirmar) return;
-
-  try {
-    await deleteDoc(doc(db, "registros", r.id));
-  } catch (error) {
-    alert("Error al eliminar");
-    console.log(error);
-  }
-}}
-  className="delete-btn"
->
-  Eliminar
-</button>
-
-    </div>
-    ))}
+ <div key={index} className="registro-item">
+  <div className="registro-texto">
+    {r.trabajador} - {r.fecha} - {r.lugar} - {r.horas}h
   </div>
+
+  <div className="registro-actions">
+    <button
+      onClick={() => {
+        setEditando(r);
+        setEditFecha(r.fecha);
+        setEditLugar(r.lugar);
+        setEditHoras(r.horas);
+      }}
+      className="secondary-btn"
+    >
+      Editar
+    </button>
+
+    <button
+      onClick={async () => {
+        const confirmar = window.confirm(
+          `¿Seguro que quieres eliminar el registro de ${r.trabajador} del ${r.fecha}?`
+        );
+
+        if (!confirmar) return;
+
+        try {
+          await deleteDoc(doc(db, "registros", r.id));
+        } catch (error) {
+          alert("Error al eliminar");
+          console.log(error);
+        }
+      }}
+      className="delete-btn"
+    >
+      Eliminar
+    </button>
+  </div>
+</div>
 
         </>
         )}
