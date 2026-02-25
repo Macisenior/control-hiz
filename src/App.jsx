@@ -415,7 +415,22 @@ doc.text(
       </div>
     ))}
   </div>
-     
+      <div style={{ marginTop: "15px", marginBottom: "15px" }}>
+    <button
+      className="excel-btn"
+      onClick={exportarExcel}
+      style={{ marginRight: "10px" }}
+    >
+      Exportar Excel
+    </button>
+
+    <button
+      className="pdf-btn"
+      onClick={exportarPDF}
+    >
+      Exportar PDF
+    </button>
+  </div> 
           <h2>Registros</h2>
       <div className="registros-container">    
         {registros.map((r, index) => (
