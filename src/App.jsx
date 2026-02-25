@@ -435,9 +435,9 @@ doc.text(
       style={{
         marginBottom: "8px",
         fontSize: "14px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center"
+       display: "flex",
+justifyContent: "space-between",
+alignItems: "flex-start"
       }}
     >
       <span>
