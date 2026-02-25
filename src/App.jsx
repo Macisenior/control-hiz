@@ -471,7 +471,7 @@ doc.text(
 </div>
 
        
-        
+        )
   {vista === "trabajadores" && (
     <>
       <h2>Trabajadores</h2>
