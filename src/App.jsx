@@ -20,15 +20,19 @@ function App() {
   const [fecha, setFecha] = useState("");
   const [lugar, setLugar] = useState("");
   const [horas, setHoras] = useState("");
-
+  const [mostrarPrecio, setMostrarPrecio] = useState(false);
   const [registros, setRegistros] = useState([]);
   const [trabajadores, setTrabajadores] = useState([]);
   const [vista, setVista] = useState("formulario");
-
+  const [precioHora, setPrecioHora] = useState(20);
   const [editando, setEditando] = useState(null);
   const [editFecha, setEditFecha] = useState("");
   const [editLugar, setEditLugar] = useState("");
   const [editHoras, setEditHoras] = useState("");
+  const [mesSeleccionado, setMesSeleccionado] = useState(
+  new Date().toISOString().slice(0, 7)  
+);
+
   // ===== EFFECT AUTH =====
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -39,6 +43,22 @@ function App() {
   }, []);
  
 // ===== EFFECT REGISTROS =====
+useEffect(() => {
+  if (registros.length === 0) return;
+
+  const meses = [
+    ...new Set(registros.map(r => r.fecha.slice(0, 7)))
+  ].sort().reverse();
+
+  const mesActual = new Date().toISOString().slice(0, 7);
+
+  if (meses.includes(mesActual)) {
+    setMesSeleccionado(mesActual);
+  } else {
+    setMesSeleccionado(meses[0]);
+  }
+
+}, [registros]);
 useEffect(() => {
   if (!user) return;
 
@@ -58,7 +78,13 @@ useEffect(() => {
 
   return () => unsubscribe();
 }, [user]);
+const cambiarMes = (direccion) => {
+  const fecha = new Date(mesSeleccionado + "-01");
+  fecha.setMonth(fecha.getMonth() + direccion);
 
+  const nuevoMes = fecha.toISOString().slice(0, 7);
+  setMesSeleccionado(nuevoMes);
+};
 // ===== EFFECT TRABAJADORES =====
 useEffect(() => {
   if (!user) return;
@@ -84,55 +110,127 @@ useEffect(() => {
   );
 }
 const exportarExcel = () => {
-  if (registros.length === 0) {
+  if (registrosFiltrados.length === 0) {
     alert("No hay registros para exportar");
     return;
   }
 
-  // -------- HOJA 1: DETALLE --------
-  const detalle = registros.map((r) => ({
-    Trabajador: r.trabajador,
-    Fecha: r.fecha,
-    Lugar: r.lugar,
-    Horas: Number(r.horas),
-  }));
+  const wb = XLSX.utils.book_new();
 
-  const hojaDetalle = XLSX.utils.json_to_sheet(detalle);
+  const precio = precioHora;
+  const mesTexto = formatearMes(mesSeleccionado);
 
-  // -------- HOJA 2: RESUMEN --------
-  const resumen = {};
+  const data = [];
 
-  registros.forEach((r) => {
-    if (!resumen[r.trabajador]) {
-      resumen[r.trabajador] = 0;
-    }
-    resumen[r.trabajador] += Number(r.horas);
+  // ===== CABECERA CORPORATIVA =====
+  data.push([`CONTROL HIZ - ${mesTexto}`]);
+  data.push([]);
+  data.push(["Precio / hora (€)", precio]);
+  data.push([]);
+
+  // ===== ENCABEZADOS TABLA =====
+  data.push(["Trabajador", "Fecha", "Lugar", "Horas", "Precio", "Total"]);
+
+  // ===== FILAS =====
+  registrosFiltrados.forEach((r, index) => {
+    const filaExcel = 6 + index; // empieza en fila 6
+    data.push([
+      r.trabajador,
+      r.fecha,
+      r.lugar,
+      Number(r.horas),
+      precio,
+      { f: `D${filaExcel}*E${filaExcel}` }
+    ]);
   });
 
-  const datosResumen = Object.keys(resumen).map((trabajador) => ({
-    Trabajador: trabajador,
-    TotalHoras: resumen[trabajador],
-  }));
+  const totalInicio = 6;
+  const totalFin = totalInicio + registrosFiltrados.length - 1;
 
-  const hojaResumen = XLSX.utils.json_to_sheet(datosResumen);
+  data.push([]);
+  data.push([
+    "",
+    "",
+    "TOTAL HORAS",
+    { f: `SUM(D${totalInicio}:D${totalFin})` }
+  ]);
 
-  // -------- CREAR LIBRO --------
-  const libro = XLSX.utils.book_new();
+  data.push([
+    "",
+    "",
+    "TOTAL €",
+    "",
+    "",
+    { f: `SUM(F${totalInicio}:F${totalFin})` }
+  ]);
 
-  XLSX.utils.book_append_sheet(libro, hojaDetalle, "Detalle");
-  XLSX.utils.book_append_sheet(libro, hojaResumen, "Resumen");
+  const ws = XLSX.utils.aoa_to_sheet(data);
 
-  XLSX.writeFile(libro, "Control_HIZ.xlsx");
+  ws["!cols"] = [
+    { wch: 15 },
+    { wch: 12 },
+    { wch: 25 },
+    { wch: 10 },
+    { wch: 10 },
+    { wch: 12 }
+  ];
+
+  XLSX.utils.book_append_sheet(wb, ws, "Informe");
+
+  XLSX.writeFile(wb, `Control_HIZ_${mesSeleccionado}.xlsx`);
 };
+ 
+
+  
 // Total general
-const totalHoras = registros.reduce(
+const registrosFiltrados = registros.filter((r) =>
+  r.fecha.startsWith(mesSeleccionado)
+);
+const totalHoras = registrosFiltrados.reduce(
   (acc, r) => acc + Number(r.horas),
   0
+  
 );
+ const añoActual = new Date().getFullYear(); 
+// =============================
+// HORAS POR TRABAJADOR (MES)
+// =============================
 
+const horasPorTrabajadorMes = {};
+
+registrosFiltrados.forEach((r) => {
+  if (!horasPorTrabajadorMes[r.trabajador]) {
+    horasPorTrabajadorMes[r.trabajador] = 0;
+  }
+  horasPorTrabajadorMes[r.trabajador] += Number(r.horas);
+});
+// =============================
+// HORAS POR TRABAJADOR (AÑO)
+// =============================
+
+const horasPorTrabajadorAnual = {};
+
+registros.forEach((r) => {
+  const fecha = new Date(r.fecha);
+
+  if (fecha.getFullYear() === añoActual) {
+    if (!horasPorTrabajadorAnual[r.trabajador]) {
+      horasPorTrabajadorAnual[r.trabajador] = 0;
+    }
+
+    horasPorTrabajadorAnual[r.trabajador] += Number(r.horas);
+  }
+});
 // Mes actual
+const formatearMes = (mes) => {
+  const fecha = new Date(mes + "-01");
+  return fecha.toLocaleDateString("es-ES", {
+    month: "long",
+    year: "numeric"
+  });
+};
 const mesActual = new Date().getMonth();
-const añoActual = new Date().getFullYear();
+
 
 const totalMesActual = registros
   .filter((r) => {
@@ -145,7 +243,7 @@ const totalMesActual = registros
   .reduce((acc, r) => acc + Number(r.horas), 0);
 
 // Registros totales
-const totalRegistros = registros.length;
+const totalRegistros = registrosFiltrados.length;
 
 // Horas por trabajador
 const horasPorTrabajador = {};
@@ -199,7 +297,7 @@ registros.forEach((r) => {
 }
 const exportarPDF = () => {
 
-  if (registros.length === 0) {
+  if (registrosFiltrados.length === 0) {
     alert("No hay registros para exportar");
     return;
   }
@@ -226,13 +324,19 @@ const exportarPDF = () => {
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(12);
 
-  doc.text(`Total horas: ${totalHoras} h`, 14, 35);
-  doc.text(`Horas este mes: ${totalMesActual} h`, 14, 42);
-  doc.text(`Total registros: ${totalRegistros}`, 14, 49);
-  doc.setDrawColor(210);
-  doc.line(14, 55, 196, 55);
+ doc.text(
+  `Total horas del mes: ${totalHoras} h`,
+  14,
+  35
+);
+
+doc.text(
+  `Total registros: ${totalRegistros}`,
+  14,
+  42
+);
   // ===== TABLA =====
-  const tabla = registros.map((r) => [
+  const tabla = registrosFiltrados.map((r) => [
     r.trabajador,
     r.fecha,
     r.lugar,
@@ -271,11 +375,31 @@ const exportarPDF = () => {
 });
 
   // ===== TOTAL FINAL =====
-  const finalY = doc.lastAutoTable.finalY + 10;
-  doc.setFontSize(12);
-  doc.setFont(undefined, "bold");
-  doc.text(`TOTAL GENERAL: ${totalHoras} h`, 14, finalY);
-  doc.text(`TOTAL GENERAL: ${totalHoras} h`, 14, finalY);
+const finalY = doc.lastAutoTable.finalY + 15;
+const totalImporte = totalHoras * precioHora;
+
+// Fondo suave
+doc.setFillColor(245, 247, 250);
+doc.rect(12, finalY - 8, 186, 30, "F");
+
+// Texto
+doc.setFontSize(12);
+doc.setFont(undefined, "normal");
+doc.setTextColor(60);
+
+doc.text(`Total horas`, 20, finalY);
+doc.text(`${totalHoras} h`, 150, finalY, { align: "right" });
+
+doc.text(`Precio / hora`, 20, finalY + 8);
+doc.text(`${precioHora} €`, 150, finalY + 8, { align: "right" });
+
+// Total final destacado
+doc.setFont(undefined, "bold");
+doc.setFontSize(14);
+doc.setTextColor(30, 70, 140);
+
+doc.text(`TOTAL FINAL`, 20, finalY + 18);
+doc.text(`${totalImporte} €`, 150, finalY + 18, { align: "right" });
 
 // ---- PIE DE PÁGINA ----
 doc.setFontSize(8);
@@ -287,7 +411,7 @@ doc.text(
   doc.internal.pageSize.height - 10,
   { align: "center" }
 );
-  doc.save("Control_HIZ.pdf");
+ doc.save(`Control_HIZ_${mesSeleccionado}.pdf`);
 };
  return (
   <div className="container">
@@ -302,17 +426,47 @@ doc.text(
     Cerrar sesión
   </button>
 </div>
-    <div className="nav-buttons">
-        <button onClick={() => setVista("formulario")}>
-          Añadir
-        </button>
-        <button onClick={() => setVista("gestion")}>
-          Gestión
-        </button>
-        <button onClick={() => setVista("trabajadores")}>
-        Trabajadores
-      </button>
-    </div>
+<div className="config-wrapper">
+  <button
+    className="config-btn"
+    onClick={() => setMostrarPrecio(!mostrarPrecio)}
+  >
+    ⚙
+  </button>
+</div>
+
+{mostrarPrecio && (
+  <div className="precio-box">
+    <label>Precio / hora (€)</label>
+    <input
+      type="number"
+      value={precioHora}
+      onChange={(e) => setPrecioHora(Number(e.target.value))}
+    />
+  </div>
+)}
+   <div className="nav-buttons">
+  <button
+    className={vista === "formulario" ? "nav-btn active" : "nav-btn"}
+    onClick={() => setVista("formulario")}
+  >
+    Añadir
+  </button>
+
+  <button
+    className={vista === "gestion" ? "nav-btn active" : "nav-btn"}
+    onClick={() => setVista("gestion")}
+  >
+    Gestión
+  </button>
+
+  <button
+    className={vista === "trabajadores" ? "nav-btn active" : "nav-btn"}
+    onClick={() => setVista("trabajadores")}
+  >
+    Trabajadores
+  </button>
+</div>
 
       {vista === "formulario" && (
         <>
@@ -384,163 +538,165 @@ doc.text(
           </button>
         </>
       )}
+{vista === "gestion" && (
+  <>
+    <div className="gestion-wrapper">
 
-      {vista === "gestion" && (      
-        <>
-        <div className="summary-panel">
-
-    <div className="summary-card">
-      <h3>Total horas</h3>
-      <p>{totalHoras} h</p>
-    </div>
-
-    <div className="summary-card">
-      <h3>Horas este mes</h3>
-      <p>{totalMesActual} h</p>
-    </div>
-
-    <div className="summary-card">
-      <h3>Total registros</h3>
-      <p>{totalRegistros}</p>
-    </div>
-
-  </div>
-  <div className="worker-summary">
-    <h3>Horas por trabajador</h3>
-
-    {Object.entries(horasPorTrabajador).map(([nombre, horas]) => (
-      <div key={nombre} className="worker-row">
-        <span>{nombre}</span>
-        <strong>{horas} h</strong>
+      {/* ===== CONTROL MES ===== */}
+      <div className="month-control">
+        <button onClick={() => cambiarMes(-1)}>◀</button>
+        <h2>{formatearMes(mesSeleccionado)}</h2>
+        <button onClick={() => cambiarMes(1)}>▶</button>
       </div>
-    ))}
-  </div>
-      <div style={{ marginTop: "15px", marginBottom: "15px" }}>
-    <button
-      className="excel-btn"
-      onClick={exportarExcel}
-      style={{ marginRight: "10px" }}
-    >
-      Exportar Excel
-    </button>
 
-    <button
-      className="pdf-btn"
-      onClick={exportarPDF}
-    >
-      Exportar PDF
-    </button>
-  </div> 
-          <h2>Registros</h2>
-      <div className="registros-container">    
-        {registros.map((r, index) => (
- <div key={index} className="registro-item">
-  <div className="registro-texto">
-    {r.trabajador} - {r.fecha} - {r.lugar} - {r.horas}h
-  </div>
+      {/* ===== TARJETA RESUMEN ===== */}
+      <div className="month-summary">
+        <div className="month-main">
+          <p className="big-hours">{totalHoras} h</p>
+          <p className="reg-count">
+            {totalRegistros} registros
+          </p>
+        </div>
 
-  <div className="registro-actions">
-    <button
-      onClick={() => {
-        setEditando(r);
-        setEditFecha(r.fecha);
-        setEditLugar(r.lugar);
-        setEditHoras(r.horas);
-      }}
-      className="secondary-btn"
-    >
-      Editar
-    </button>
+        <div className="worker-list">
+          {Object.entries(horasPorTrabajadorMes).map(
+            ([nombre, horas]) => (
+              <div key={nombre} className="worker-row">
+                <span>{nombre}</span>
+                <strong>{horas} h</strong>
+              </div>
+            )
+          )}
+        </div>
+      </div>
 
-    <button
-      onClick={async () => {
-        const confirmar = window.confirm(
-          `¿Seguro que quieres eliminar el registro de ${r.trabajador} del ${r.fecha}?`
-        );
+      {/* ===== BOTONES EXPORTAR ===== */}
+      <div className="export-buttons">
+        <button
+          className="excel-btn"
+          onClick={exportarExcel}
+        >
+          Exportar Excel
+        </button>
 
-        if (!confirmar) return;
-
-        try {
-          await deleteDoc(doc(db, "registros", r.id));
-        } catch (error) {
-          alert("Error al eliminar");
-          console.log(error);
-        }
-      }}
-      className="delete-btn"
-    >
-     Eliminar
+        <button
+          className="pdf-btn"
+          onClick={exportarPDF}
+        >
+          Exportar PDF
         </button>
       </div>
+
+      {/* ===== REGISTROS ===== */}
+      <h2>Registros</h2>
+
+      <div className="registros-container">
+        {registrosFiltrados.map((r) => (
+          <div key={r.id} className="registro-item">
+            <div className="registro-texto">
+              {r.trabajador} - {r.fecha} - {r.lugar} - {r.horas}h
+            </div>
+
+            <div className="registro-actions">
+              <button
+                onClick={() => {
+                  setEditando(r);
+                  setEditFecha(r.fecha);
+                  setEditLugar(r.lugar);
+                  setEditHoras(r.horas);
+                }}
+                className="secondary-btn"
+              >
+                Editar
+              </button>
+
+              <button
+                onClick={async () => {
+                  const confirmar = window.confirm(
+                    `¿Seguro que quieres eliminar el registro de ${r.trabajador} del ${r.fecha}?`
+                  );
+
+                  if (!confirmar) return;
+
+                  await deleteDoc(doc(db, "registros", r.id));
+                }}
+                className="delete-btn"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </>
+)}
+ {vista === "trabajadores" && (
+  <>
+  <div className="trabajadores-header">
+  <h2>Trabajadores</h2>
+
+  <button
+    className="secondary-btn"
+    onClick={async () => {
+      if (!nuevoTrabajador) return;
+
+      if (trabajadores.includes(nuevoTrabajador)) {
+        alert("Ese trabajador ya existe");
+        return;
+      }
+
+      await addDoc(collection(db, "trabajadores"), {
+        nombre: nuevoTrabajador
+      });
+
+      setNuevoTrabajador("");
+    }}
+  >
+    Añadir
+  </button>
+</div>
+
+<input
+  type="text"
+  placeholder="Nuevo trabajador"
+  value={nuevoTrabajador}
+  onChange={(e) => setNuevoTrabajador(e.target.value)}
+/>
+
+    {/* ===== TARJETAS ===== */}
+   <div className="trabajadores-grid">
+  {trabajadores.map((t, index) => (
+    <div key={index} className="trabajador-card">
+
+      <div className="trabajador-header">
+        <span className="trabajador-nombre">{t}</span>
+        <div className="trabajador-datos">
+         <span className="trabajador-horas">
+  {horasPorTrabajadorAnual[t] || 0} h
+</span>
+<span className="trabajador-sub">
+  Año actual
+</span>
+
+          <button
+            className="delete-btn small"
+            onClick={() => {
+              const nuevos = trabajadores.filter((_, i) => i !== index);
+              setTrabajadores(nuevos);
+            }}
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+
     </div>
   ))}
 </div>
-</>
+  </>
 )}
-  {vista === "trabajadores" && (
-    <>
-      <h2>Trabajadores</h2>
-
-      <input
-        type="text"
-        placeholder="Nuevo trabajador"
-        value={nuevoTrabajador}
-        onChange={(e) => setNuevoTrabajador(e.target.value)}
-      />
-
-      <button
-        className="secondary-btn"
-        onClick={async () => {
-          if (!nuevoTrabajador) return;
-
-          if (trabajadores.includes(nuevoTrabajador)) {
-            alert("Ese trabajador ya existe");
-            return;
-          }
-
-          await addDoc(collection(db, "trabajadores"), {
-            nombre: nuevoTrabajador
-          });
-
-          setNuevoTrabajador("");
-        }}
-      >
-        Añadir
-      </button>
-
-      <div style={{ marginTop: "20px" }}>
-        {trabajadores.map((t, index) => (
-          <div
-            key={index}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "8px"
-            }}
-          >
-            <span>{t}</span>
-
-            <button
-              onClick={() => {
-                const nuevos = trabajadores.filter((_, i) => i !== index);
-                setTrabajadores(nuevos);
-              }}
-              style={{
-                backgroundColor: "#c0392b",
-                color: "white",
-                border: "none",
-                padding: "4px 8px",
-                borderRadius: "4px",
-                cursor: "pointer"
-              }}
-            >
-              Eliminar
-            </button>
-          </div>
-            ))}
-           </div>
-    </>
-  )}
 
   {editando && (
     <div className="modal">

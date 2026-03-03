@@ -1,0 +1,9 @@
+🔹 Para trabajar en local:
+npm run dev
+
+
+🔹 Para publicar en GitHub Pages:
+npm run build
+git add .
+git commit -m "update"
+git push
