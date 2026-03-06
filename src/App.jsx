@@ -48,6 +48,33 @@ function App() {
   }, []);
  
 // ===== EFFECT REGISTROS =====
+ const guardarHorasRapido = async (h) => {
+
+  const hoy = new Date().toISOString().slice(0,10);
+
+  const nuevoRegistro = {
+    trabajador,
+    fecha: hoy,
+    lugar,
+    horas: h
+  };
+
+  await addDoc(collection(db, "registros"), nuevoRegistro);
+
+  setFecha(hoy);
+  setHoras(h);
+
+};
+useEffect(() => {
+  const ultimoTrabajador = localStorage.getItem("ultimoTrabajador");
+  const ultimoLugar = localStorage.getItem("ultimoLugar");
+
+  if (ultimoTrabajador) setTrabajador(ultimoTrabajador);
+  if (ultimoLugar) setLugar(ultimoLugar);
+  if (!fecha) {
+  setFecha(new Date().toISOString().slice(0,10));
+}
+}, []);
 useEffect(() => {
   if (registros.length === 0) return;
 
@@ -327,17 +354,22 @@ doc.setTextColor(0, 0, 0);
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(12);
 
- doc.text(
+
+doc.text(`Periodo: ${formatearMes(mesSeleccionado)}`, 14, 35);
+doc.text(
   `Total horas del mes: ${totalHoras} h`,
   14,
-  35
+  45
 );
 
 doc.text(
   `Total registros: ${totalRegistros}`,
   14,
-  42
+  52
 );
+doc.setDrawColor(200);
+doc.line(14, 58, 196, 58);
+
   // ===== TABLA =====
   const tabla = registrosFiltrados.map((r) => [
     r.trabajador,
@@ -356,14 +388,18 @@ doc.text(
     textColor: [60, 60, 60], // gris base
   },
 
-  headStyles: {
-    fillColor: [52, 152, 219],
-    textColor: 255,
-  },
+ headStyles: {
+  fillColor: [44, 62, 80],
+  textColor: 255,
+  halign: "center"
+},
 
-  columnStyles: {
-    3: { halign: "right" } // Horas alineadas derecha
-  },
+columnStyles: {
+  0: { cellWidth: 35 },   // trabajador
+  1: { halign: "center" },
+  2: { cellWidth: 90 },   // lugar
+  3: { halign: "right", cellWidth: 25 }
+}, 
 
   alternateRowStyles: {
     fillColor: [245, 245, 245],
@@ -395,7 +431,8 @@ doc.text(`${totalHoras} h`, 150, finalY, { align: "right" });
 
 doc.text(`Precio / hora`, 20, finalY + 8);
 doc.text(`${precioHora} €`, 150, finalY + 8, { align: "right" });
-
+doc.setDrawColor(200);
+doc.line(14, finalY - 12, 196, finalY - 12);
 // Total final destacado
 doc.setFont(undefined, "bold");
 doc.setFontSize(14);
@@ -450,6 +487,7 @@ for (let i = 1; i <= paginas; i++) {
     ⚙
   </button>
 </div>
+
 
 {mostrarPrecio && (
   <div className="precio-box">
@@ -545,9 +583,9 @@ for (let i = 1; i <= paginas; i++) {
     await addDoc(collection(db, "registros"), nuevoRegistro);
     localStorage.setItem("ultimoTrabajador", trabajador);
     localStorage.setItem("ultimoLugar", lugar);
-    setTrabajador("");
+   
     setFecha("");
-    setLugar("");
+   
     setHoras("");
   }}
           >
@@ -555,6 +593,31 @@ for (let i = 1; i <= paginas; i++) {
           </button>
         </>
       )}
+   <div className="quick-hours">
+
+<button
+className="quick-btn btn8"
+onClick={() => guardarHorasRapido(8)}
+>
++8h
+</button>
+
+<button
+className="quick-btn btn7"
+onClick={() => guardarHorasRapido(7)}
+>
++7h
+</button>
+
+<button
+className="quick-btn btn6"
+onClick={() => guardarHorasRapido(6)}
+>
++6h
+</button>
+
+</div>
+
 {vista === "gestion" && (
   <>
     <div className="gestion-wrapper">

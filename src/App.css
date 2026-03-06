@@ -659,3 +659,44 @@ button:hover {
   font-size: 11px;
   color: #99aed8;
 }
+.quick-btn {
+  background: #27ae60;
+  color: white;
+}
+.quick-hours{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+
+.quick-btn{
+flex:1;
+padding:10px;
+border:none;
+border-radius:8px;
+color:white;
+font-weight:600;
+cursor:pointer;
+}
+
+.btn8{
+background:#27ae60;
+}
+
+.btn7{
+background:#3498db;
+}
+
+.btn6{
+background:#7f8c8d;
+}
+.quick-hours{
+position:fixed;
+bottom:15px;
+left:0;
+right:0;
+display:flex;
+justify-content:center;
+gap:10px;
+padding:10px;
+}
