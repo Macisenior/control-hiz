@@ -7,7 +7,9 @@ import { db } from "./firebase";
 import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { auth } from "./firebase";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { useRef } from "react";
 function App() {
+  
 
   // ===== STATES =====
   
@@ -28,6 +30,7 @@ function App() {
   const [mostrarPrecio, setMostrarPrecio] = useState(false);
   const [registros, setRegistros] = useState([]);
   const [trabajadores, setTrabajadores] = useState([]);
+  const fileInputRef = useRef(null);
   const [vista, setVista] = useState("formulario");
   const [precioHora, setPrecioHora] = useState(20);
   const [editando, setEditando] = useState(null);
@@ -37,7 +40,32 @@ function App() {
   const [mesSeleccionado, setMesSeleccionado] = useState(
   new Date().toISOString().slice(0, 7)  
 );
+ const exportarBackup = () => {
 
+  const backup = {
+    fecha: new Date().toISOString(),
+    registros: registros,
+    trabajadores: trabajadores
+  };
+
+  const datos = JSON.stringify(backup, null, 2);
+
+  const blob = new Blob([datos], { type: "application/json" });
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  const ahora = new Date();
+const fecha = ahora.toISOString().slice(0,10);
+const hora = ahora.toTimeString().slice(0,5).replace(":", "-");
+
+a.download = `backup_control_hiz_${fecha}_${hora}.json`;
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+};
   // ===== EFFECT AUTH =====
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -46,7 +74,34 @@ function App() {
     });
     return () => unsubscribe();
   }, []);
- 
+ const restaurarBackup = async (event) => {
+
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = async (e) => {
+
+    try {
+
+      const datos = JSON.parse(e.target.result);
+
+      for (const registro of datos) {
+        await addDoc(collection(db, "registros"), registro);
+      }
+
+      alert("Backup restaurado correctamente");
+
+    } catch (error) {
+      console.error(error);
+      alert("Error al restaurar backup");
+    }
+
+  };
+
+  reader.readAsText(file);
+};
 // ===== EFFECT REGISTROS =====
  const guardarHorasRapido = async (h) => {
 
@@ -654,21 +709,36 @@ for (let i = 1; i <= paginas; i++) {
 
       {/* ===== BOTONES EXPORTAR ===== */}
       <div className="export-buttons">
-        <button
-          className="excel-btn"
-          onClick={exportarExcel}
-        >
-          Exportar Excel
-        </button>
 
-        <button
-          className="pdf-btn"
-          onClick={exportarPDF}
-        >
-          Exportar PDF
-        </button>
-      </div>
+  <button className="excel-btn" onClick={exportarExcel}>
+    Exportar Excel
+  </button>
 
+  <button className="pdf-btn" onClick={exportarPDF}>
+    Exportar PDF
+  </button>
+
+  <button className="backup-btn" onClick={exportarBackup}>
+    Exportar Backup
+  </button>
+
+  <button
+    className="backup-btn"
+    onClick={() => fileInputRef.current.click()}
+  >
+    Restaurar Backup
+  </button>
+
+  <input
+    type="file"
+    accept=".json"
+    ref={fileInputRef}
+    onChange={restaurarBackup}
+    style={{ display: "none" }}
+  />
+
+</div>
+      
       {/* ===== REGISTROS ===== */}
       <h2>Registros</h2>
 

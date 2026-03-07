@@ -700,3 +700,26 @@ justify-content:center;
 gap:10px;
 padding:10px;
 }
+.backup-btn{
+background:#e67e22;
+color:white;
+padding:10px 15px;
+border-radius:8px;
+cursor:pointer;
+display:inline-block;
+margin-left:10px;
+}
+<label className="backup-btn">
+Restaurar Backup
+<input
+type="file"
+accept=".json"
+onChange={restaurarBackup}
+style={{ display: "none" }}
+/>
+</label>
+.backup-container{
+display:flex;
+gap:10px;
+justify-content:center;
+}
