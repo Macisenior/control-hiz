@@ -708,8 +708,7 @@ for (let i = 1; i <= paginas; i++) {
       </div>
 
       {/* ===== BOTONES EXPORTAR ===== */}
-      <div className="export-buttons">
-
+ <div className="export-buttons">
   <button className="excel-btn" onClick={exportarExcel}>
     Exportar Excel
   </button>
@@ -717,7 +716,9 @@ for (let i = 1; i <= paginas; i++) {
   <button className="pdf-btn" onClick={exportarPDF}>
     Exportar PDF
   </button>
+</div>
 
+<div className="backup-buttons">
   <button className="backup-btn" onClick={exportarBackup}>
     Exportar Backup
   </button>
@@ -728,6 +729,8 @@ for (let i = 1; i <= paginas; i++) {
   >
     Restaurar Backup
   </button>
+
+
 
   <input
     type="file"
