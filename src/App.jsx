@@ -98,13 +98,17 @@ useEffect(() => {
 
 // ===== EFFECT REGISTROS =====
 useEffect(() => {
+
+  if (!user) return;
+
   const unsubscribe = escucharRegistros((datos) => {
     setRegistros(datos);
     setLoading(false);
   });
 
   return () => unsubscribe();
-}, []);
+
+}, [user]);
  const restaurarBackup = async (event) => {
 
   const file = event.target.files[0];
