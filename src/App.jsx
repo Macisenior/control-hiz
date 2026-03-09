@@ -8,8 +8,15 @@ import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "fireb
 import { auth } from "./firebase";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRef } from "react";
+ import Gestion from "./components/Gestion"; 
+ import { formatearMes } from "./utils/fechas";
+import { exportarExcel } from "./utils/exportExcel";  
+import { crearRegistro } from "./services/registrosService";
+import { escucharRegistros } from "./services/registrosService";
+import FormHoras from "./components/FormHoras";
 function App() {
-  
+
+
 
   // ===== STATES =====
   
@@ -40,6 +47,13 @@ function App() {
   const [mesSeleccionado, setMesSeleccionado] = useState(
   new Date().toISOString().slice(0, 7)  
 );
+const registrosFiltrados = registros.filter((r) =>
+  r.fecha.startsWith(mesSeleccionado)
+);
+const totalHoras = registrosFiltrados.reduce(
+  (acc, r) => acc + Number(r.horas),
+  0
+);
  const exportarBackup = () => {
 
   const backup = {
@@ -68,12 +82,13 @@ a.download = `backup_control_hiz_${fecha}_${hora}.json`;
 };
   // ===== EFFECT AUTH =====
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
+  const unsubscribe = escucharRegistros((datos) => {
+    setRegistros(datos);
+    setLoading(false);
+  });
+
+  return () => unsubscribe();
+}, []);
  const restaurarBackup = async (event) => {
 
   const file = event.target.files[0];
@@ -114,7 +129,7 @@ a.download = `backup_control_hiz_${fecha}_${hora}.json`;
     horas: h
   };
 
-  await addDoc(collection(db, "registros"), nuevoRegistro);
+ await crearRegistro(nuevoRegistro);
 
   setFecha(hoy);
   setHoras(h);
@@ -196,88 +211,7 @@ useEffect(() => {
     </div>
   );
 }
-const exportarExcel = () => {
-  if (registrosFiltrados.length === 0) {
-    alert("No hay registros para exportar");
-    return;
-  }
 
-  const wb = XLSX.utils.book_new();
-
-  const precio = precioHora;
-  const mesTexto = formatearMes(mesSeleccionado);
-
-  const data = [];
-
-  // ===== CABECERA CORPORATIVA =====
-  data.push([`CONTROL HIZ - ${mesTexto}`]);
-  data.push([]);
-  data.push(["Precio / hora (€)", precio]);
-  data.push([]);
-
-  // ===== ENCABEZADOS TABLA =====
-  data.push(["Trabajador", "Fecha", "Lugar", "Horas", "Precio", "Total"]);
-
-  // ===== FILAS =====
-  registrosFiltrados.forEach((r, index) => {
-    const filaExcel = 6 + index; // empieza en fila 6
-    data.push([
-      r.trabajador,
-      r.fecha,
-      r.lugar,
-      Number(r.horas),
-      precio,
-      { f: `D${filaExcel}*E${filaExcel}` }
-    ]);
-  });
-
-  const totalInicio = 6;
-  const totalFin = totalInicio + registrosFiltrados.length - 1;
-
-  data.push([]);
-  data.push([
-    "",
-    "",
-    "TOTAL HORAS",
-    { f: `SUM(D${totalInicio}:D${totalFin})` }
-  ]);
-
-  data.push([
-    "",
-    "",
-    "TOTAL €",
-    "",
-    "",
-    { f: `SUM(F${totalInicio}:F${totalFin})` }
-  ]);
-
-  const ws = XLSX.utils.aoa_to_sheet(data);
-
-  ws["!cols"] = [
-    { wch: 15 },
-    { wch: 12 },
-    { wch: 25 },
-    { wch: 10 },
-    { wch: 10 },
-    { wch: 12 }
-  ];
-
-  XLSX.utils.book_append_sheet(wb, ws, "Informe");
-
-  XLSX.writeFile(wb, `Control_HIZ_${mesSeleccionado}.xlsx`);
-};
- 
-
-  
-// Total general
-const registrosFiltrados = registros.filter((r) =>
-  r.fecha.startsWith(mesSeleccionado)
-);
-const totalHoras = registrosFiltrados.reduce(
-  (acc, r) => acc + Number(r.horas),
-  0
-  
-);
  const añoActual = new Date().getFullYear(); 
 // =============================
 // HORAS POR TRABAJADOR (MES)
@@ -308,14 +242,7 @@ registros.forEach((r) => {
     horasPorTrabajadorAnual[r.trabajador] += Number(r.horas);
   }
 });
-// Mes actual
-const formatearMes = (mes) => {
-  const fecha = new Date(mes + "-01");
-  return fecha.toLocaleDateString("es-ES", {
-    month: "long",
-    year: "numeric"
-  });
-};
+
 const mesActual = new Date().getMonth();
 
 
@@ -633,7 +560,7 @@ for (let i = 1; i <= paginas; i++) {
           horas,
         };
 
-        await addDoc(collection(db, "registros"), nuevoRegistro);
+       await crearRegistro(nuevoRegistro);
 
         localStorage.setItem("ultimoTrabajador", trabajador);
         localStorage.setItem("ultimoLugar", lugar);
@@ -675,117 +602,27 @@ for (let i = 1; i <= paginas; i++) {
 )}  
 
 
+
 {vista === "gestion" && (
-  <>
-    <div className="gestion-wrapper">
-
-      {/* ===== CONTROL MES ===== */}
-      <div className="month-control">
-        <button onClick={() => cambiarMes(-1)}>◀</button>
-        <h2>{formatearMes(mesSeleccionado)}</h2>
-        <button onClick={() => cambiarMes(1)}>▶</button>
-      </div>
-
-      {/* ===== TARJETA RESUMEN ===== */}
-      <div className="month-summary">
-        <div className="month-main">
-          <p className="big-hours">{totalHoras} h</p>
-          <p className="reg-count">
-            {totalRegistros} registros
-          </p>
-        </div>
-
-        <div className="worker-list">
-          {Object.entries(horasPorTrabajadorMes).map(
-            ([nombre, horas]) => (
-              <div key={nombre} className="worker-row">
-                <span>{nombre}</span>
-                <strong>{horas} h</strong>
-              </div>
-            )
-          )}
-        </div>
-      </div>
-
-      {/* ===== BOTONES EXPORTAR ===== */}
- <div className="export-buttons">
-  <button className="excel-btn" onClick={exportarExcel}>
-    Exportar Excel
-  </button>
-
-  <button className="pdf-btn" onClick={exportarPDF}>
-    Exportar PDF
-  </button>
-</div>
-
-<div className="backup-buttons">
-  <button className="backup-btn" onClick={exportarBackup}>
-    Exportar Backup
-  </button>
-
-  <button
-    className="backup-btn"
-    onClick={() => fileInputRef.current.click()}
-  >
-    Restaurar Backup
-  </button>
-
-
-
-  <input
-    type="file"
-    accept=".json"
-    ref={fileInputRef}
-    onChange={restaurarBackup}
-    style={{ display: "none" }}
-  />
-
-</div>
-      
-      {/* ===== REGISTROS ===== */}
-      <h2>Registros</h2>
-
-      <div className="registros-container">
-        {registrosFiltrados.map((r) => (
-          <div key={r.id} className="registro-item">
-            <div className="registro-texto">
-              {r.trabajador} - {r.fecha} - {r.lugar} - {r.horas}h
-            </div>
-
-            <div className="registro-actions">
-              <button
-                onClick={() => {
-                  setEditando(r);
-                  setEditFecha(r.fecha);
-                  setEditLugar(r.lugar);
-                  setEditHoras(r.horas);
-                }}
-                className="secondary-btn"
-              >
-                Editar
-              </button>
-
-              <button
-                onClick={async () => {
-                  const confirmar = window.confirm(
-                    `¿Seguro que quieres eliminar el registro de ${r.trabajador} del ${r.fecha}?`
-                  );
-
-                  if (!confirmar) return;
-
-                  await deleteDoc(doc(db, "registros", r.id));
-                }}
-                className="delete-btn"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-    </div>
-  </>
+<Gestion
+  mesSeleccionado={mesSeleccionado}
+  cambiarMes={cambiarMes}
+  totalHoras={totalHoras}
+  totalRegistros={totalRegistros}
+  horasPorTrabajadorMes={horasPorTrabajadorMes}
+  exportarExcel={exportarExcel}
+  exportarPDF={exportarPDF}
+  exportarBackup={exportarBackup}
+  restaurarBackup={restaurarBackup}
+  fileInputRef={fileInputRef}
+  formatearMes={formatearMes}
+  registrosFiltrados={registrosFiltrados}
+  precioHora={precioHora}
+  setEditando={setEditando}
+  setEditFecha={setEditFecha}
+  setEditLugar={setEditLugar}
+  setEditHoras={setEditHoras}
+/>
 )}
 
  {vista === "trabajadores" && (
