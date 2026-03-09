@@ -14,6 +14,7 @@ import { exportarExcel } from "./utils/exportExcel";
 import { crearRegistro } from "./services/registrosService";
 import { escucharRegistros } from "./services/registrosService";
 import FormHoras from "./components/FormHoras";
+
 function App() {
 
 
@@ -54,7 +55,10 @@ const totalHoras = registrosFiltrados.reduce(
   (acc, r) => acc + Number(r.horas),
   0
 );
- const exportarBackup = () => {
+const ultimo = registros
+  .filter(r => r.trabajador === trabajador)
+  .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))[0];
+const exportarBackup = () => {
 
   const backup = {
     fecha: new Date().toISOString(),
@@ -80,8 +84,20 @@ a.download = `backup_control_hiz_${fecha}_${hora}.json`;
 
   URL.revokeObjectURL(url);
 };
-  // ===== EFFECT AUTH =====
-  useEffect(() => {
+ // ===== EFFECT AUTH =====
+useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, (usuario) => {
+    if (usuario) {
+      setUser(usuario);
+    }
+  });
+
+  return () => unsubscribe();
+}, []);
+
+
+// ===== EFFECT REGISTROS =====
+useEffect(() => {
   const unsubscribe = escucharRegistros((datos) => {
     setRegistros(datos);
     setLoading(false);
@@ -118,7 +134,21 @@ a.download = `backup_control_hiz_${fecha}_${hora}.json`;
   reader.readAsText(file);
 };
 // ===== EFFECT REGISTROS =====
- const guardarHorasRapido = async (h) => {
+const ultimoRegistro = () => {
+
+  const ultimo = registros
+    .filter(r => r.trabajador === trabajador)
+    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))[0];
+
+  if (!ultimo) {
+    alert("No hay registros anteriores para este trabajador");
+    return;
+  }
+
+  setLugar(ultimo.lugar);
+  setHoras(ultimo.horas);
+};
+const guardarHorasRapido = async (h) => {
 
   const hoy = new Date().toISOString().slice(0,10);
 
@@ -571,7 +601,14 @@ for (let i = 1; i <= paginas; i++) {
     >
       Guardar
     </button>
-
+<button
+  className="secondary-btn"
+  onClick={ultimoRegistro}
+>
+  {ultimo
+    ? `Repetir: ${ultimo.lugar} (${ultimo.horas}h)`
+    : "Repetir último"}
+</button>
     {/* BOTONES RÁPIDOS */}
     <div className="quick-hours">
 
