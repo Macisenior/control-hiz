@@ -86,30 +86,28 @@ a.download = `backup_control_hiz_${fecha}_${hora}.json`;
 };
  // ===== EFFECT AUTH =====
 useEffect(() => {
+
   const unsubscribe = onAuthStateChanged(auth, (usuario) => {
-    if (usuario) {
-      setUser(usuario);
-    }
+    setUser(usuario);
+    setLoading(false);
   });
 
   return () => unsubscribe();
+
 }, []);
-
-
-// ===== EFFECT REGISTROS =====
+ // ===== EFFECT REGISTROS =====
 useEffect(() => {
 
   if (!user) return;
 
   const unsubscribe = escucharRegistros((datos) => {
     setRegistros(datos);
-    setLoading(false);
   });
 
   return () => unsubscribe();
 
 }, [user]);
- const restaurarBackup = async (event) => {
+const restaurarBackup = async (event) => {
 
   const file = event.target.files[0];
   if (!file) return;
