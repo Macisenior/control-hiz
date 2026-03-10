@@ -14,7 +14,7 @@ import { exportarExcel } from "./utils/exportExcel";
 import { crearRegistro } from "./services/registrosService";
 import { escucharRegistros } from "./services/registrosService";
 import FormHoras from "./components/FormHoras";
-
+import Trabajadores from "./components/Trabajadores";
 function App() {
 
 
@@ -48,6 +48,7 @@ function App() {
   const [mesSeleccionado, setMesSeleccionado] = useState(
   new Date().toISOString().slice(0, 7)  
 );
+
 const registrosFiltrados = registros.filter((r) =>
   r.fecha.startsWith(mesSeleccionado)
 );
@@ -84,6 +85,7 @@ a.download = `backup_control_hiz_${fecha}_${hora}.json`;
 
   URL.revokeObjectURL(url);
 };
+
  // ===== EFFECT AUTH =====
 useEffect(() => {
 
@@ -150,6 +152,7 @@ const ultimoRegistro = () => {
   setLugar(ultimo.lugar);
   setHoras(ultimo.horas);
 };
+
 const guardarHorasRapido = async (h) => {
 
   const hoy = new Date().toISOString().slice(0,10);
@@ -480,6 +483,58 @@ for (let i = 1; i <= paginas; i++) {
 }
  doc.save(`Control_HIZ_${mesSeleccionado}.pdf`);
 };
+
+// ===== VISTAS =====
+const vistas = {
+  formulario: (
+    <FormHoras
+      trabajador={trabajador}
+      setTrabajador={setTrabajador}
+      fecha={fecha}
+      setFecha={setFecha}
+      lugar={lugar}
+      setLugar={setLugar}
+      horas={horas}
+      setHoras={setHoras}
+      trabajadores={trabajadores}
+      guardarHorasRapido={guardarHorasRapido}
+      ultimoRegistro={ultimoRegistro}
+    />
+  ),
+
+  gestion: (
+    <Gestion
+      mesSeleccionado={mesSeleccionado}
+      cambiarMes={cambiarMes}
+      totalHoras={totalHoras}
+      totalRegistros={totalRegistros}
+      horasPorTrabajadorMes={horasPorTrabajadorMes}
+      exportarExcel={exportarExcel}
+      exportarPDF={exportarPDF}
+      exportarBackup={exportarBackup}
+      restaurarBackup={restaurarBackup}
+      fileInputRef={fileInputRef}
+      formatearMes={formatearMes}
+      registrosFiltrados={registrosFiltrados}
+      precioHora={precioHora}
+      setEditando={setEditando}
+      setEditFecha={setEditFecha}
+      setEditLugar={setEditLugar}
+      setEditHoras={setEditHoras}
+    />
+  ),
+
+  trabajadores: (
+    <Trabajadores
+      trabajadores={trabajadores}
+      nuevoTrabajador={nuevoTrabajador}
+      setNuevoTrabajador={setNuevoTrabajador}
+      horasPorTrabajadorAnual={horasPorTrabajadorAnual}
+      setTrabajadores={setTrabajadores}
+       />
+  )
+};
+
  return (
   <div className="container">
 
@@ -535,200 +590,7 @@ for (let i = 1; i <= paginas; i++) {
     Trabajadores
   </button>
 </div>
-{vista === "formulario" && (
-  <>
-    <div style={{ marginBottom: "10px" }}>
-      <select
-        value={trabajador}
-        onChange={(e) => setTrabajador(e.target.value)}
-      >
-        <option value="">Selecciona trabajador</option>
-        {trabajadores.map((t, index) => (
-          <option key={index} value={t}>
-            {t}
-          </option>
-        ))}
-      </select>
-    </div>
-
-    <div style={{ marginBottom: "10px" }}>
-      <input
-        type="date"
-        value={fecha}
-        onChange={(e) => setFecha(e.target.value)}
-      />
-    </div>
-
-    <div style={{ marginBottom: "10px" }}>
-      <input
-        type="text"
-        placeholder="Lugar de trabajo"
-        value={lugar}
-        onChange={(e) => setLugar(e.target.value)}
-      />
-    </div>
-
-    <div style={{ marginBottom: "10px" }}>
-      <input
-        type="number"
-        placeholder="Horas trabajadas"
-        value={horas}
-        onChange={(e) => setHoras(e.target.value)}
-      />
-    </div>
-
-    <button
-      className="primary-btn"
-      onClick={async () => {
-        if (!trabajador || !fecha || !lugar || !horas) {
-          alert("Completa todos los campos");
-          return;
-        }
-
-        const nuevoRegistro = {
-          trabajador,
-          fecha,
-          lugar,
-          horas,
-        };
-
-       await crearRegistro(nuevoRegistro);
-
-        localStorage.setItem("ultimoTrabajador", trabajador);
-        localStorage.setItem("ultimoLugar", lugar);
-
-        setFecha("");
-        setHoras("");
-      }}
-    >
-      Guardar
-    </button>
-<button
-  className="secondary-btn"
-  onClick={ultimoRegistro}
->
-  {ultimo
-    ? `Repetir: ${ultimo.lugar} (${ultimo.horas}h)`
-    : "Repetir último"}
-</button>
-    {/* BOTONES RÁPIDOS */}
-    <div className="quick-hours">
-
-      <button
-        className="quick-btn btn8"
-        onClick={() => guardarHorasRapido(8)}
-      >
-        +8h
-      </button>
-
-      <button
-        className="quick-btn btn7"
-        onClick={() => guardarHorasRapido(7)}
-      >
-        +7h
-      </button>
-
-      <button
-        className="quick-btn btn6"
-        onClick={() => guardarHorasRapido(6)}
-      >
-        +6h
-      </button>
-
-    </div>
-
-  </>
-)}  
-
-
-
-{vista === "gestion" && (
-<Gestion
-  mesSeleccionado={mesSeleccionado}
-  cambiarMes={cambiarMes}
-  totalHoras={totalHoras}
-  totalRegistros={totalRegistros}
-  horasPorTrabajadorMes={horasPorTrabajadorMes}
-  exportarExcel={exportarExcel}
-  exportarPDF={exportarPDF}
-  exportarBackup={exportarBackup}
-  restaurarBackup={restaurarBackup}
-  fileInputRef={fileInputRef}
-  formatearMes={formatearMes}
-  registrosFiltrados={registrosFiltrados}
-  precioHora={precioHora}
-  setEditando={setEditando}
-  setEditFecha={setEditFecha}
-  setEditLugar={setEditLugar}
-  setEditHoras={setEditHoras}
-/>
-)}
-
- {vista === "trabajadores" && (
-  <>
-  <div className="trabajadores-header">
-  <h2>Trabajadores</h2>
-
-  <button
-    className="secondary-btn"
-    onClick={async () => {
-      if (!nuevoTrabajador) return;
-
-      if (trabajadores.includes(nuevoTrabajador)) {
-        alert("Ese trabajador ya existe");
-        return;
-      }
-
-      await addDoc(collection(db, "trabajadores"), {
-        nombre: nuevoTrabajador
-      });
-
-      setNuevoTrabajador("");
-    }}
-  >
-    Añadir
-  </button>
-</div>
-
-<input
-  type="text"
-  placeholder="Nuevo trabajador"
-  value={nuevoTrabajador}
-  onChange={(e) => setNuevoTrabajador(e.target.value)}
-/>
-
-    {/* ===== TARJETAS ===== */}
-   <div className="trabajadores-grid">
-  {trabajadores.map((t, index) => (
-    <div key={index} className="trabajador-card">
-
-      <div className="trabajador-header">
-        <span className="trabajador-nombre">{t}</span>
-        <div className="trabajador-datos">
-         <span className="trabajador-horas">
-  {horasPorTrabajadorAnual[t] || 0} h
-</span>
-<span className="trabajador-sub">
-  Año actual
-</span>
-
-          <button
-            className="delete-btn small"
-            onClick={() => {
-              const nuevos = trabajadores.filter((_, i) => i !== index);
-              setTrabajadores(nuevos);
-            }}
-          >
-            Eliminar
-          </button>
-        </div>
-      </div>
-
-    </div>
-  ))}
-</div>
-  </>
-)}
+{vistas[vista]}
 
   {editando && (
     <div className="modal">
