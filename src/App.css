@@ -119,8 +119,8 @@ button:hover {
 }
 
 .nav-buttons button {
-  flex: 1;
-  min-width: 0;
+  flex: 0;
+  padding: 6px 14px;
 }
 
 /* ===== TOPBAR ===== */
@@ -709,15 +709,7 @@ cursor:pointer;
 display:inline-block;
 margin-left:10px;
 }
-<label className="backup-btn">
-Restaurar Backup
-<input
-type="file"
-accept=".json"
-onChange={restaurarBackup}
-style={{ display: "none" }}
-/>
-</label>
+
 .backup-container{
 display:flex;
 gap:10px;
@@ -728,7 +720,6 @@ display:flex;
 justify-content:center;
 gap:12px;
 margin-top:10px;
-
 }
 
 .backup-buttons{
@@ -737,4 +728,388 @@ justify-content:center;
 gap:12px;
 margin-top:8px;
 
+}
+.quick-hours{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+}
+
+.hour-btn{
+  background:#e5e7eb;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.hour-btn:hover{
+  background:#d1d5db;
+}
+
+.custom-hours{
+  background:#3b82f6;
+  color:white;
+  border:none;
+  padding:8px 16px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.custom-hours:hover{
+  background:#2563eb;
+}
+
+.horas-form select,
+.horas-form input{
+  padding:8px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+.quick-hours{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+.quick-hours button{
+  background:#22c55e;
+  color:white;
+  border:none;
+  padding:6px 12px;
+  border-radius:6px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.quick-hours button:hover{
+  background:#16a34a;
+}
+
+
+.btn-primary{
+  background:#22c55e;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.btn-primary:hover{
+  background:#16a34a;
+}
+.trabajo-tabs{
+  display:flex;
+  gap:8px;
+  margin:10px 0 15px 0;
+}
+
+.trabajo-tabs button{
+  padding:6px 14px;
+  border-radius:8px;
+  border:none;
+  background:#e5e7eb;
+  cursor:pointer;
+}
+
+.trabajo-tabs button.active{
+  background:#22c55e;
+  color:white;
+}
+.registro-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:6px 0;
+}
+.botones-trabajo{
+  display:flex;
+  flex-wrap:wrap;
+  gap:15px;
+  margin-top:15px;
+}
+.horas-form{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+
+
+.quick-hours{
+  width:100%;
+  display:flex;
+  gap:19px;
+}
+
+
+.horas-rapidas button{
+padding:6px 10px;
+background:#2ecc71;
+border:none;
+border-radius:5px;
+color:white;
+cursor:pointer;
+}
+
+
+.material-info{
+  display:flex;
+  gap:20px;  
+}
+.material-header{
+  display:grid;
+  grid-template-columns:1fr 80px 40px;
+  font-weight:600;
+  margin-top:10px;
+  
+}
+.material-row{
+  display:grid;
+  grid-template-columns:1fr 80px 40px;
+  align-items:center;
+  padding:6px 0;
+  
+}
+.horas-form{
+display:flex;
+align-items:center;
+gap:10px;
+margin-top:10px;
+flex-wrap:wrap;
+}
+
+
+.material-form{
+  display:flex;
+  gap:10px;
+  margin-bottom:10px;
+  
+}
+.horas-inputs{
+  display:flex;
+  gap:10px;
+}
+.horas-form select{
+width:220px;
+padding:6px;
+}
+.horas-form input{
+width:80px;
+padding:6px;
+text-align:center;
+}
+.horas-form button{
+height:34px;
+}
+.horas-inputs input{
+  width:80px;
+}
+.registros{
+width:100%;
+margin-top:10px;
+}
+
+.registro-row{
+display:grid;
+grid-template-columns: 150px 1fr 60px 40px;
+padding:6px;
+border-bottom:1px solid #ddd;
+}
+.horas-rapidas{
+display:flex;
+gap:6px;
+}
+
+.registro-header{
+font-weight:bold;
+background:#f4f4f4;
+}
+
+.horas-rapidas button{
+background:#2ecc71;
+border:none;
+padding:6px 10px;
+border-radius:5px;
+color:white;
+cursor:pointer;
+font-size:14px;
+}
+.tabs-trabajo{
+display:flex;
+gap:12px;
+margin-top:15px;
+margin-bottom:15px;
+}
+/* contenedor general */
+
+.horas-form{
+display:flex;
+justify-content:center;
+margin-top:15px;
+}
+
+/* línea del formulario */
+
+.horas-linea{
+display:flex;
+align-items:center;
+gap:10px;
+flex-wrap:wrap;
+}
+
+/* selector trabajador */
+
+.horas-linea select{
+width:220px;
+padding:6px;
+}
+
+/* input horas */
+
+.horas-linea input{
+width:60px;
+padding:6px;
+text-align:center;
+}
+
+/* botones rápidos */
+
+.horas-rapidas{
+display:flex;
+gap:6px;
+}
+
+.horas-rapidas button{
+background:#2ecc71;
+border:none;
+padding:6px 10px;
+border-radius:5px;
+color:white;
+cursor:pointer;
+font-size:14px;
+}
+.material-cantidad{
+display:flex;
+align-items:center;
+gap:5px;
+
+}
+
+.material-cantidad span{
+  padding:6px 10px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  background:#f5f5f5;
+  font-size:14px;
+  
+}
+.material-cantidad input{
+width:40px;
+padding:5px;
+}
+.material-header-line{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+}
+.material-form input[type="number"]{
+text-align:right;
+width:60px;
+}
+.trabajo-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+}
+
+.trabajo-info{
+display:flex;
+gap:25px;
+align-items:center;
+margin-bottom:15px;
+}
+
+.precio-hora{
+display:flex;
+flex-direction:column;
+}
+
+.precio-hora input{
+width:120px;
+}
+.trabajo-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;
+}
+
+.trabajo-panel{
+display:flex;
+gap:40px;
+align-items:center;
+background:white;
+padding:15px 20px;
+border-radius:10px;
+box-shadow:0 2px 6px rgba(0,0,0,0.08);
+margin-bottom:15px;
+}
+
+.panel-item{
+display:flex;
+flex-direction:column;
+font-size:14px;
+}
+
+.panel-item span{
+color:#666;
+font-size:12px;
+}
+
+.panel-item input{
+width:90px;
+}
+.tabs-trabajo{
+display:flex;
+gap:10px;
+margin-bottom:20px;
+}
+
+.pdf-btn{
+background:#3c8dbc;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:6px;
+cursor:pointer;
+}
+.trabajo-header h2{
+margin:5px 0;
+}
+.titulo-trabajo{
+display:flex;
+align-items:center;
+gap:10px;
+margin:5px 0;
+}
+
+.estado{
+font-size:12px;
+padding:4px 10px;
+border-radius:20px;
+font-weight:600;
+}
+
+.estado.activo{
+background:#d4edda;
+color:#1e7e34;
+}
+
+.estado.finalizado{
+background:#e2e3e5;
+color:#555;
 }

@@ -8,15 +8,23 @@ export const crearRegistro = async (nuevoRegistro) => {
 export const eliminarRegistro = async (id) => {
   await deleteDoc(doc(db, "registros", id));
 };
-
-
 export const escucharRegistros = (callback) => {
-  return onSnapshot(collection(db, "registros"), (snapshot) => {
-    const datos = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data()
-    }));
 
-    callback(datos);
-  });
+  const ref = collection(db, "registros");
+
+  return onSnapshot(
+    ref,
+    (snapshot) => {
+
+      const datos = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      callback(datos);
+    },
+    (error) => {
+      console.warn("Firestore listener:", error.message);
+    }
+  );
 };

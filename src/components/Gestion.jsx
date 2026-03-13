@@ -119,8 +119,8 @@ style={{ display: "none" }}
 
 <div key={r.id} className="registro-item">
 
-<div className="registro-texto">
-{r.trabajador} - {r.fecha} - {r.lugar} - {r.horas}h
+<div className="registro-row">
+{r.trabajador} - {r.fecha} - {r.cliente || "-"} - {r.lugar} - {r.horas}h
 </div>
 
 

@@ -73,12 +73,16 @@ setTrabajadores,
                 onClick={async () => {
   const trabajador = trabajadores[index];
 
-  const q = query(collection(db, "trabajadores"), where("nombre", "==", trabajador));
-  const snapshot = await getDocs(q);
+  const q = query(
+  collection(db, "trabajadores"),
+  where("nombre", "==", trabajador)
+);
 
-  snapshot.forEach(async (d) => {
-    await deleteDoc(doc(db, "trabajadores", d.id));
-  });
+const snapshot = await getDocs(q);
+
+for (const d of snapshot.docs) {
+  await deleteDoc(doc(db, "trabajadores", d.id));
+}
 }}
                 >
                   Eliminar

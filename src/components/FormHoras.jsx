@@ -1,3 +1,4 @@
+import { crearRegistro } from "../services/registrosService";
 function FormHoras({
   trabajador,
   setTrabajador,
@@ -7,6 +8,8 @@ function FormHoras({
   setLugar,
   horas,
   setHoras,
+  cliente, 
+  setCliente,
   trabajadores,
   guardarHorasRapido,
   ultimoRegistro
@@ -36,7 +39,12 @@ function FormHoras({
            onChange={(e) => setFecha(e.target.value)}
          />
        </div>
-   
+   <input
+  type="text"
+  placeholder="Cliente"
+  value={cliente}
+  onChange={(e) => setCliente(e.target.value)}
+/>
        <div style={{ marginBottom: "10px" }}>
          <input
            type="text"

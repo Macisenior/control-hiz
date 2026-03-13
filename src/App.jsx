@@ -4,7 +4,7 @@ import "./App.css";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { db } from "./firebase";
-import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, collectionGroup, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { auth } from "./firebase";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRef } from "react";
@@ -15,6 +15,8 @@ import { crearRegistro } from "./services/registrosService";
 import { escucharRegistros } from "./services/registrosService";
 import FormHoras from "./components/FormHoras";
 import Trabajadores from "./components/Trabajadores";
+import Trabajos from "./components/Trabajos";
+import MaterialesBase from "./components/MaterialesBase";
 function App() {
 
 
@@ -34,6 +36,7 @@ function App() {
   const [lugar, setLugar] = useState(
   localStorage.getItem("ultimoLugar") || ""
 );
+  const [cliente, setCliente] = useState("");
   const [horas, setHoras] = useState("");
   const [mostrarPrecio, setMostrarPrecio] = useState(false);
   const [registros, setRegistros] = useState([]);
@@ -49,9 +52,9 @@ function App() {
   new Date().toISOString().slice(0, 7)  
 );
 
-const registrosFiltrados = registros.filter((r) =>
-  r.fecha.startsWith(mesSeleccionado)
-);
+const registrosFiltrados = registros
+  .filter(r => r.fecha && r.fecha.startsWith(mesSeleccionado))
+  .sort((a, b) => b.fecha.localeCompare(a.fecha));
 const totalHoras = registrosFiltrados.reduce(
   (acc, r) => acc + Number(r.horas),
   0
@@ -90,6 +93,7 @@ a.download = `backup_control_hiz_${fecha}_${hora}.json`;
 useEffect(() => {
 
   const unsubscribe = onAuthStateChanged(auth, (usuario) => {
+    console.log("Usuario:", usuario);
     setUser(usuario);
     setLoading(false);
   });
@@ -97,10 +101,20 @@ useEffect(() => {
   return () => unsubscribe();
 
 }, []);
- // ===== EFFECT REGISTROS =====
-useEffect(() => {
+ useEffect(() => {
 
-  if (!user) return;
+  const unsubscribe = onAuthStateChanged(auth, (usuario) => {
+    setUser(usuario);
+    setLoading(false);
+  });
+
+  return () => unsubscribe();
+
+}, []);
+
+ useEffect(() => {
+
+  if (!user || !user.uid) return;
 
   const unsubscribe = escucharRegistros((datos) => {
     setRegistros(datos);
@@ -108,7 +122,8 @@ useEffect(() => {
 
   return () => unsubscribe();
 
-}, [user]);
+}, [user?.uid]);
+
 const restaurarBackup = async (event) => {
 
   const file = event.target.files[0];
@@ -160,6 +175,7 @@ const guardarHorasRapido = async (h) => {
   const nuevoRegistro = {
     trabajador,
     fecha: hoy,
+    cliente,
     lugar,
     horas: h
   };
@@ -200,16 +216,16 @@ useEffect(() => {
   if (!user) return;
 
   const unsubscribe = onSnapshot(
-    collection(db, "registros"),
+     collection(db, "registros"),
     (snapshot) => {
       
-    const datos = snapshot.docs
-  .map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }))
-  .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));  
-      setRegistros(datos);
+ const datos = snapshot.docs.map(doc => ({
+  id: doc.id,
+ trabajoId: doc.ref.parent?.parent?.id || null,
+  ...doc.data()
+}));
+
+setRegistros(datos);
     }
   );
 
@@ -248,6 +264,9 @@ useEffect(() => {
 }
 
  const añoActual = new Date().getFullYear(); 
+if (loading) {
+  return <div>Cargando...</div>;
+} 
 // =============================
 // HORAS POR TRABAJADOR (MES)
 // =============================
@@ -487,19 +506,22 @@ for (let i = 1; i <= paginas; i++) {
 // ===== VISTAS =====
 const vistas = {
   formulario: (
-    <FormHoras
-      trabajador={trabajador}
-      setTrabajador={setTrabajador}
-      fecha={fecha}
-      setFecha={setFecha}
-      lugar={lugar}
-      setLugar={setLugar}
-      horas={horas}
-      setHoras={setHoras}
-      trabajadores={trabajadores}
-      guardarHorasRapido={guardarHorasRapido}
-      ultimoRegistro={ultimoRegistro}
-    />
+   <FormHoras
+  trabajador={trabajador}
+  setTrabajador={setTrabajador}
+  fecha={fecha}
+  setFecha={setFecha}
+  cliente={cliente}
+  setCliente={setCliente}
+  lugar={lugar}
+  setLugar={setLugar}
+  horas={horas}
+  setHoras={setHoras}
+  trabajadores={trabajadores}
+  
+  guardarHorasRapido={guardarHorasRapido}
+  ultimoRegistro={ultimoRegistro}
+/> 
   ),
 
   gestion: (
@@ -532,7 +554,9 @@ const vistas = {
       horasPorTrabajadorAnual={horasPorTrabajadorAnual}
       setTrabajadores={setTrabajadores}
        />
-  )
+  ),
+trabajos: <Trabajos user={user} trabajador={trabajador} />,
+materiales: <MaterialesBase />,
 };
 
  return (
@@ -589,6 +613,19 @@ const vistas = {
   >
     Trabajadores
   </button>
+  <button
+  className={vista === "trabajos" ? "nav-btn active" : "nav-btn"}
+  onClick={() => setVista("trabajos")}
+>
+Trabajos
+</button>
+<button
+className={vista==="materiales" ? "nav-btnactive" :"nav-btn"}
+onClick={()=>setVista("materiales")}
+>
+Materiales
+</button>
+
 </div>
 {vistas[vista]}
 
