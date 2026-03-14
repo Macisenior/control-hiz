@@ -301,25 +301,21 @@ button:hover {
   height: 28px;
   object-fit: contain;
 }
-.registro-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 10px;
-  gap: 10px;
+.registro-item{
+padding:8px 0;
+border-bottom:1px solid #eee;
+cursor:pointer;
 }
 
 .registro-texto {
   flex: 1;
 }
-
-.registro-actions {
- 
-  gap: 0px;
-  flex-shrink: 0;
- 
-align-items:flex-start;
+.registro-actions{
+display:flex;
+gap:8px;
+margin-top:6px;
 }
+
 .gestion-top {
   display: flex;
   justify-content: space-between;
@@ -824,6 +820,8 @@ margin-top:8px;
   justify-content:space-between;
   align-items:center;
   padding:6px 0;
+  font-size:14px;
+line-height:1.4;
 }
 .botones-trabajo{
   display:flex;
@@ -918,6 +916,8 @@ display:grid;
 grid-template-columns: 150px 1fr 60px 40px;
 padding:6px;
 border-bottom:1px solid #ddd;
+font-size:14px;
+line-height:1.4;
 }
 .horas-rapidas{
 display:flex;
@@ -1114,4 +1114,40 @@ color:#1e7e34;
 .estado.finalizado{
 background:#e2e3e5;
 color:#555;
+}
+@media (max-width:600px){
+
+.container{
+padding:10px;
+}
+
+button{
+font-size:14px;
+padding:8px 12px;
+}
+
+input, select{
+width:100%;
+}
+
+}
+.registro-texto{
+display:flex;
+justify-content:space-between;
+font-size:14px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+.registro-texto strong{
+color:#2563eb;
+font-weight:600;
+}
+.registro-item.activo{
+background:#f1f5f9;
+border-radius:6px;
+}
+.registro-item{
+border-bottom:1px solid #e5e7eb;
+padding:10px 0;
 }
