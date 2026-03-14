@@ -314,9 +314,11 @@ button:hover {
 }
 
 .registro-actions {
-  display: flex;
-  gap: 8px;
+ 
+  gap: 0px;
   flex-shrink: 0;
+ 
+align-items:flex-start;
 }
 .gestion-top {
   display: flex;
@@ -691,7 +693,7 @@ background:#3498db;
 background:#7f8c8d;
 }
 .quick-hours{
-position:fixed;
+
 bottom:15px;
 left:0;
 right:0;
