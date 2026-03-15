@@ -592,6 +592,7 @@ materiales: <MaterialesBase />,
     />
   </div>
 )}
+
    <div className="nav-buttons">
   <button
     className={vista === "formulario" ? "nav-btn active" : "nav-btn"}

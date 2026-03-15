@@ -428,7 +428,7 @@ PDF
 value={trabajadorSeleccionado}
 onChange={(e)=>setTrabajadorSeleccionado(e.target.value)}
 >
-<option value="">Seleccionar trabajador</option>
+<option value="">Trabajador</option>
 
 {trabajadores.map(t => (
 <option key={t.id} value={t.nombre}>
@@ -448,49 +448,55 @@ onChange={(e)=>setFechaRegistro(e.target.value)}
 
 <input
 type="number"
+min="0"
+max="12"
 step="0.5"
 value={horasSeleccionadas}
 onChange={(e)=>setHorasSeleccionadas(e.target.value)}
 />
 
-
 <button
 className="btn-primary"
-onClick={()=>guardarHoras(Number(horasSeleccionadas))}
+onClick={()=>{
+if(!trabajadorSeleccionado) return
+if(!horasSeleccionadas) return
+
+guardarHoras(Number(horasSeleccionadas))
+}}
 >
 Registrar
 </button>
 
 
-<div className="horas-rapidas">
-
-<button onClick={()=>guardarHoras(8)}>+8h</button>
-<button onClick={()=>guardarHoras(7)}>+7h</button>
-<button onClick={()=>guardarHoras(6)}>+6h</button>
 
 </div>
 
 </div>
 
-</div>
+
 
 
 <h3>Registros</h3>
 
 
 {registros.map(r => (
-
 <div key={r.id} className="registro-row">
 
-<span>{r.fecha}</span>
-<span>{r.trabajador}</span>
-<span>{r.horas}h</span>
+<span className="registro-info">
+{r.trabajador} · {r.fecha}
+</span>
+
+<span className="registro-horas">
+{r.horas}h
+</span>
 
 <button onClick={()=>borrarRegistro(r.id)}>
 🗑
 </button>
 
 </div>
+
+
 
 ))}
 
@@ -741,7 +747,6 @@ setTrabajoActivo(t)
 Abrir
 </button>
 
-
 <button
 onClick={(e)=>{
 e.stopPropagation()
@@ -750,7 +755,6 @@ finalizarTrabajo(t.id)
 >
 Finalizar
 </button>
-
 
 <button
 onClick={(e)=>{
@@ -763,13 +767,13 @@ borrarTrabajo(t.id)
 
 </div>
 
+<div className="trabajo-info">
 
-<h3 onClick={()=>setTrabajoActivo(t)}>
-{t.nombre}
-</h3>
+<h3>{t.nombre}</h3>
 
-<p>Cliente: {t.cliente}</p>
-<p>Lugar: {t.lugar}</p>
+<p>{t.cliente}</p>
+
+</div>
 
 </div>
 

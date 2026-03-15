@@ -147,15 +147,17 @@ onTouchEnd={handlePressEnd}
 >
 <div className="registro-texto">
 
-<span>
+<span className="registro-info">
 {r.trabajador} · {r.fecha} · {r.lugar}
 </span>
 
-<strong>
+<strong className="registro-horas">
 {r.horas}h
 </strong>
 
 </div>
+
+
 {/* ===== ACCIONES SOLO SI LONG PRESS ===== */}
 
 {registroAccion === r.id && (

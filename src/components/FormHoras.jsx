@@ -39,12 +39,7 @@ function FormHoras({
            onChange={(e) => setFecha(e.target.value)}
          />
        </div>
-   <input
-  type="text"
-  placeholder="Cliente"
-  value={cliente}
-  onChange={(e) => setCliente(e.target.value)}
-/>
+  
        <div style={{ marginBottom: "10px" }}>
          <input
            type="text"

@@ -815,14 +815,7 @@ margin-top:8px;
   background:#22c55e;
   color:white;
 }
-.registro-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:6px 0;
-  font-size:14px;
-line-height:1.4;
-}
+
 .botones-trabajo{
   display:flex;
   flex-wrap:wrap;
@@ -912,16 +905,10 @@ margin-top:10px;
 }
 
 .registro-row{
-display:grid;
-grid-template-columns: 150px 1fr 60px 40px;
-padding:6px;
-border-bottom:1px solid #ddd;
-font-size:14px;
-line-height:1.4;
-}
-.horas-rapidas{
 display:flex;
-gap:6px;
+justify-content:space-between;
+align-items:center;
+padding:6px 0;
 }
 
 .registro-header{
@@ -970,9 +957,8 @@ padding:6px;
 
 /* input horas */
 
-.horas-linea input{
-width:60px;
-padding:6px;
+.horas-linea input[type="number"]{
+width:70px;
 text-align:center;
 }
 
@@ -980,13 +966,13 @@ text-align:center;
 
 .horas-rapidas{
 display:flex;
-gap:6px;
+gap:4px;
 }
 
 .horas-rapidas button{
 background:#2ecc71;
 border:none;
-padding:6px 10px;
+padding:6px 8px;
 border-radius:5px;
 color:white;
 cursor:pointer;
@@ -1052,10 +1038,10 @@ margin-bottom:15px;
 
 .trabajo-panel{
 display:flex;
-gap:40px;
+gap:20px;
 align-items:center;
 background:white;
-padding:15px 20px;
+padding:10px 16px;
 border-radius:10px;
 box-shadow:0 2px 6px rgba(0,0,0,0.08);
 margin-bottom:15px;
@@ -1097,6 +1083,7 @@ display:flex;
 align-items:center;
 gap:10px;
 margin:5px 0;
+margin-bottom:2px;
 }
 
 .estado{
@@ -1133,12 +1120,11 @@ width:100%;
 }
 .registro-texto{
 display:flex;
-justify-content:space-between;
-font-size:14px;
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis;
+align-items:flex-start;
+gap:10px;
+font-size:13px;
 }
+
 .registro-texto strong{
 color:#2563eb;
 font-weight:600;
@@ -1151,3 +1137,72 @@ border-radius:6px;
 border-bottom:1px solid #e5e7eb;
 padding:10px 0;
 }
+.registros-container{
+background:rgb(234, 236, 230);
+padding:10px;
+border-radius:10px;
+box-shadow:0 2px 6px rgba(0,0,0,0.08);
+margin-top:10px;
+}
+.registro-info{
+flex:1;
+min-width:0;
+word-break:break-word;
+}
+
+.registro-horas{
+flex-shrink:0;
+min-width:35px;
+text-align:right;
+color:#2563eb;
+font-weight:600;
+}
+.trabajo-card{
+background:white;
+border-radius:10px;
+padding:14px;
+margin-bottom:12px;
+box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+
+.trabajo-actions{
+display:flex;
+gap:8px;
+margin-bottom:8px;
+}
+
+.trabajo-info h3{
+margin:0;
+font-size:18px;
+}
+
+.trabajo-info p{
+margin:2px 0 0 0;
+color:#555;
+font-size:14px;
+}
+.horas-linea{
+display:flex;
+gap:6px;
+align-items:center;
+flex-wrap:wrap;
+}
+
+.horas-linea select{
+flex:1;
+min-width:140px;
+}
+
+.horas-linea input[type="date"]{
+width:120px;
+}
+
+.horas-linea input[type="number"]{
+width:60px;
+text-align:center;
+}
+
+.horas-linea button{
+white-space:nowrap;
+}
+
