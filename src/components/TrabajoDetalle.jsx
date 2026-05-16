@@ -11,7 +11,7 @@ updateDoc
 } from "firebase/firestore"
 
 import { exportTrabajoPDF } from "../utils/exportTrabajoPDF"
-
+import ExtrasTrabajo from "./ExtrasTrabajo"
 function TrabajoDetalle({ trabajo, volver }) {
 
 const [materialesCatalogo,setMaterialesCatalogo]=useState([])
@@ -292,7 +292,12 @@ onClick={()=>setVista("materiales")}
 >
 Materiales
 </button>
-
+<button
+className={vista==="extras"?"active":""}
+onClick={()=>setVista("extras")}
+>
+Extras
+</button>
 <button
 className="pdf-btn"
 onClick={()=>exportTrabajoPDF(
@@ -610,7 +615,9 @@ Cancelar
 </div>
 
 )}
-
+{vista==="extras" && (
+<ExtrasTrabajo trabajo={trabajo} />
+)}
 {/* =========================
 RESUMEN TRABAJO
 ========================= */}
